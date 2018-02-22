@@ -252,16 +252,16 @@ test('outerHTML should translate props to attrs', function(t) {
 test('removeAttribute', function(t){
   var div = document.createElement('div')
   div.setAttribute('data-id', 100)
-  t.same(div.attributes[0], { name: 'data-id', value: 100 })
+  t.same(div.attributes[0], { name: 'data-id', value: 100, namespaceURI: null })
   div.setAttribute('data-key', 'key')
-  t.same(div.attributes[1], { name: 'data-key', value: 'key' })
+  t.same(div.attributes[1], { name: 'data-key', value: 'key', namespaceURI: null })
   div.removeAttribute('data-key')
-  t.same(div.attributes, [ { name: 'data-id', value: 100 } ])
+  t.same(div.attributes, [ { name: 'data-id', value: 100, namespaceURI: null } ])
   div.removeAttribute('data-id')
   t.same(div.attributes, [])
   div.className = 'css-class'
   div.removeAttribute('class')
-  t.equal('className' in div, false)
+  t.false('className' in div)
   t.end()
 })
 
@@ -295,6 +295,18 @@ test('insertBefore', function(t){
   div.insertBefore(div5, div4)
   t.same(children[3], div5)
   t.same(div5.parentNode, div)
+
+  t.end()
+})
+
+test('Create a namespaced element', function(t){
+  const xlinkNamespace = 'http://www.w3.org/1999/xlink'
+  const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  svgElem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', xlinkNamespace)
+
+  t.equal(svgElem.getAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink'), xlinkNamespace)
+  t.equal(svgElem.nodeName, 'svg')
+  t.equal(svgElem.tagName, 'svg')
 
   t.end()
 })

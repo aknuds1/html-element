@@ -17,6 +17,13 @@ Document.prototype.createElement = function(nodeName) {
     return el;
 }
 
+Document.prototype.createElementNS = function(namespace, nodeName) {
+    var el = new Element();
+    el.namespaceURI = namespace;
+    el.nodeName = el.tagName = nodeName;
+    return el;
+}
+
 Document.prototype.createComment = function(data) {
     var el = new Comment()
     el.data = data
@@ -68,10 +75,11 @@ Style.prototype.__defineSetter__('cssText', function (v) {
     }, this)
 })
 
-function Attribute(name, value){
+function Attribute(name, value, namespaceUri) {
   if (name) {
     this.name = name;
     this.value = value ? value : '';
+    this.namespaceURI = namespaceUri
   }
 }
 
@@ -86,20 +94,24 @@ function Element() {
     this.dataset = {};
     this.className = '';
 
-    this._setProperty = function(arr, obj, key, val) {
-      var p = self._getProperty(arr, key);
+    this._setProperty = function(arr, obj, key, val, namespaceUri) {
+      var p = self._getProperty(arr, key, namespaceUri);
       if (p) {
         p.value = String(val);
         return;
       }
-      arr.push('function' === typeof obj ? new obj(key.toLowerCase(),String(val)) : obj);
+      arr.push('function' === typeof obj ? new obj(key.toLowerCase(), String(val), namespaceUri) :
+        obj);
     }
 
-    this._getProperty = function (arr, key) {
+    this._getProperty = function (arr, key, namespaceUri) {
       if (!key) return;
       key = key.toLowerCase();
-      for (var i=0;i<arr.length;i++) {
-        if (key == arr[i].name) return arr[i];
+      for (var i = 0; i < arr.length; i++) {
+        var elem = arr[i];
+        if (key == elem.name && namespaceUri == elem.namespaceURI) {
+          return elem;
+        }
       }
     }
 }
@@ -120,6 +132,10 @@ Element.prototype.setAttribute = function (n, v) {
   }
 }
 
+Element.prototype.setAttributeNS = function (namespace, n, v) {
+  this._setProperty(this.attributes, Attribute, n, v, namespace);
+}
+
 Element.prototype.getAttribute = function (n) {
   if (n == 'style'){
     return this.style.cssText
@@ -127,6 +143,11 @@ Element.prototype.getAttribute = function (n) {
     var result = this._getProperty(this.attributes, n);
     return typeof result !== 'undefined' ? result.value : null;
   }
+}
+
+Element.prototype.getAttributeNS = function (namespace, n) {
+  var result = this._getProperty(this.attributes, n, namespace);
+  return typeof result !== 'undefined' ? result.value : null;
 }
 
 Element.prototype.removeAttribute = function (n) {

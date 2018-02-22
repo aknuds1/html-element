@@ -1,7 +1,7 @@
 {
-  "name": "html-element",
+  "name": "@arve.knudsen/html-element",
   "version": "2.2.0",
-  "homepage": "https://github.com/1N50MN14/html-element",
+  "homepage": "https://github.com/aknuds1/html-element",
   "keywords": [
     "html-element",
     "HTMLElement",
@@ -10,9 +10,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/1N50MN14/html-element.git"
+    "url": "git://github.com/aknuds1/html-element.git"
   },
-  "author": "ins0mnia <ayman.mackouly@gmail.com> (http://github.com/1N50MN14)",
+  "author": "Arve Knudsen <arve.knudsen@gmail.com> (http://github.com/aknuds1)",
   "license": "MIT",
   "readmeFilename": "README.md",
   "description": "A simple HTMLElement shim on the server.",
